@@ -47,7 +47,7 @@ profile
 &userGroupId=``<br>
 !]
 
-Восстановление пароля
+forgot
 
 [!account?<br>
 &controller=`account/forgot`<br>
