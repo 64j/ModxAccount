@@ -2,7 +2,16 @@
 <h4>Личный кабинет веб пользоватля MODx Evo</h4>
 
 <p>Сниппет для регистрации, входа, напоминания пароля и личного кабинета пользователя.</p>
-<p>Для работы используется <b>ModxLoader</b> - https://github.com/64j/ModxLoader 
+<p>Для работы используется <b>ModxLoader</b> - https://github.com/64j/ModxLoader </p>
+
+<p>Создётся сниппет <b>account</b> с кодом</p>
+
+```php
+<?php
+require MODX_BASE_PATH.'assets/snippets/account/snippet.account.php';
+?>
+```
+
 <p>
 Создаётся документ "Личный кабинет" -> псевдоним -> <b>account</b> <br>
 Далее в нём дочерние ресурсы<br>
