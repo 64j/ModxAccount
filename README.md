@@ -25,41 +25,41 @@ account
 
 register
 
-[!account?
-&controller=`account/register`
-&controllerRegister=`account/register`
-&controllerLogin=`account`
-&controllerForgot=`account/forgot`
-&controllerProfile=`account/profile`
-&success=``
-&userGroupId=``
+[!account?<br>
+&controller=`account/register`<br>
+&controllerRegister=`account/register`<br>
+&controllerLogin=`account`<br>
+&controllerForgot=`account/forgot`<br>
+&controllerProfile=`account/profile`<br>
+&success=``<br>
+&userGroupId=``<br>
 !]
 
 profile
 
-[!account?
-&controller=`account/profile`
-&controllerRegister=`account/register`
-&controllerLogin=`account`
-&controllerForgot=`account/forgot`
-&controllerProfile=`account/profile`
-&success=``
-&userGroupId=``
+[!account?<br>
+&controller=`account/profile`<br>
+&controllerRegister=`account/register`<br>
+&controllerLogin=`account`<br>
+&controllerForgot=`account/forgot`<br>
+&controllerProfile=`account/profile`<br>
+&success=``<br>
+&userGroupId=``<br>
 !]
 
 Восстановление пароля
 
-[!account?
-&controller=`account/forgot`
-&controllerRegister=`account/register`
-&controllerLogin=`account`
-&controllerForgot=`account/forgot`
-&controllerProfile=`account/profile`
-&success=``
-&userGroupId=``
+[!account?<br>
+&controller=`account/forgot`<br>
+&controllerRegister=`account/register`<br>
+&controllerLogin=`account`<br>
+&controllerForgot=`account/forgot`<br>
+&controllerProfile=`account/profile`<br>
+&success=``<br>
+&userGroupId=``<br>
 !]
 
 Вместо псевдонимов контроллеров &controller..., можно поставить id страниц на которых расположен тот или иной вызов сниппета.
 
 &success - перенаправление после удачного действия сниппета.
-&userGroupId - группы, через запятую для нового зарегистрированного пользователя.
+&userGroupId - id групп, через запятую для нового зарегистрированного пользователя.
