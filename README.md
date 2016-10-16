@@ -38,28 +38,30 @@ register
 </pre>
 
 profile
-
-[!account?<br>
-&controller=`account/profile`<br>
-&controllerRegister=`account/register`<br>
-&controllerLogin=`account`<br>
-&controllerForgot=`account/forgot`<br>
-&controllerProfile=`account/profile`<br>
-&success=``<br>
-&userGroupId=``<br>
+<pre>
+[!account?
+&controller=`account/profile`
+&controllerRegister=`account/register`
+&controllerLogin=`account`
+&controllerForgot=`account/forgot`
+&controllerProfile=`account/profile`
+&success=``
+&userGroupId=``
 !]
+</pre>
 
 forgot
-
-[!account?<br>
-&controller=`account/forgot`<br>
-&controllerRegister=`account/register`<br>
-&controllerLogin=`account`<br>
-&controllerForgot=`account/forgot`<br>
-&controllerProfile=`account/profile`<br>
-&success=``<br>
-&userGroupId=``<br>
+<pre>
+[!account?
+&controller=`account/forgot`
+&controllerRegister=`account/register`
+&controllerLogin=`account`
+&controllerForgot=`account/forgot`
+&controllerProfile=`account/profile`
+&success=``
+&userGroupId=``
 !]
+</pre>
 
 Вместо псевдонимов контроллеров &controller..., можно поставить id страниц на которых расположен тот или иной вызов сниппета.
 
