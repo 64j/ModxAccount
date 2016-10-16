@@ -13,14 +13,14 @@
 
 account
 
-[!account?
-&controller=`account`
-&controllerRegister=`account/register`
-&controllerLogin=`account`
-&controllerForgot=`account/forgot`
-&controllerProfile=`account/profile`
-&success=``
-&userGroupId=``
+[!account?<br>
+&controller=`account`<br>
+&controllerRegister=`account/register`<br>
+&controllerLogin=`account`<br>
+&controllerForgot=`account/forgot`<br>
+&controllerProfile=`account/profile`<br>
+&success=``<br>
+&userGroupId=``<br>
 !]
 
 register
