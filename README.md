@@ -12,28 +12,30 @@
 и на каждой странице ставится вызов сниппета
 
 account
-
-[!account?<br>
-&controller=`account`<br>
-&controllerRegister=`account/register`<br>
-&controllerLogin=`account`<br>
-&controllerForgot=`account/forgot`<br>
-&controllerProfile=`account/profile`<br>
-&success=``<br>
-&userGroupId=``<br>
+<pre>
+[!account?
+&controller=`account`
+&controllerRegister=`account/register`
+&controllerLogin=`account`
+&controllerForgot=`account/forgot`
+&controllerProfile=`account/profile`
+&success=``
+&userGroupId=``
 !]
+</pre>
 
 register
-
-[!account?<br>
-&controller=`account/register`<br>
-&controllerRegister=`account/register`<br>
-&controllerLogin=`account`<br>
-&controllerForgot=`account/forgot`<br>
-&controllerProfile=`account/profile`<br>
-&success=``<br>
-&userGroupId=``<br>
+<pre>
+[!account?
+&controller=`account/register`
+&controllerRegister=`account/register`
+&controllerLogin=`account`
+&controllerForgot=`account/forgot`
+&controllerProfile=`account/profile`
+&success=``
+&userGroupId=``
 !]
+</pre>
 
 profile
 
