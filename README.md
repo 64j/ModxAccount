@@ -1,5 +1,5 @@
 # ModxAccount
-<h4>Личный кабинет веб пользоватля MODx Evo</h4>
+<h3>Личный кабинет веб пользователя MODx Evo</h3>
 
 <p>Сниппет для регистрации, входа, напоминания пароля и личного кабинета пользователя.</p>
 <p>Для работы используется <b>ModxLoader</b> - https://github.com/64j/ModxLoader </p>
@@ -83,3 +83,6 @@ require MODX_BASE_PATH.'assets/snippets/account/snippet.account.php';
 <p>
 <b>&userGroupId</b> - id групп, через запятую для нового зарегистрированного пользователя.
 </p>
+
+<h3>Капча</h3>
+<p>Используется эта https://github.com/64j/ModxCaptcha</p>
