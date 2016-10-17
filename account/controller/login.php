@@ -244,7 +244,6 @@ class ControllerAccountControllerLogin extends Loader {
 	 * @param $config
 	 */
 	public function ajax($config = array()) {
-		global $modx;
 		$json = array();
 
 		if($this->modx->getLoginUserID('web')) {
