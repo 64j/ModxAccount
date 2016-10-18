@@ -83,6 +83,12 @@ require MODX_BASE_PATH.'assets/snippets/account/snippet.account.php';
 <b>&userGroupId</b> - id групп, через запятую для нового зарегистрированного пользователя.
 </p>
 
+При создании вложенности документов, как указанно выше и используя вложенные URL, 
+вызов сниппета можно сократить до одной строчки
+<pre>
+[!account?&userGroupId=``!]
+</pre>
+
 <h3>AJAX</h3>
 <p>Для работы через ajax используется <b>ModxLoader</b> - https://github.com/64j/ModxLoader </p>
 
