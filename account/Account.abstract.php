@@ -4,6 +4,12 @@ if(!defined('MODX_BASE_PATH')) {
 	die('Unauthorized access.');
 }
 
+/**
+ * Class Account
+ *
+ * @license GNU General Public License (GPL), http://www.gnu.org/copyleft/gpl.html
+ * @author ko4inn <ko4inn@gmail.com>
+ */
 abstract class Account {
 	protected $default_field = array(
 		'user' => array(
