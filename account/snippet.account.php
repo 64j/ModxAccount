@@ -1,14 +1,15 @@
 <?php
+
+if(!defined('MODX_BASE_PATH')) {
+	die('Unauthorized access.');
+}
+
 /**
  * modxAccount snippet
  *
  * @license GNU General Public License (GPL), http://www.gnu.org/copyleft/gpl.html
  * @author ko4inn <ko4inn@gmail.com>
  */
-
-if(!defined('MODX_BASE_PATH')) {
-	die('Unauthorized access.');
-}
 
 $config = array();
 
