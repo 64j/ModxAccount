@@ -28,7 +28,7 @@ class AccountControllerRegister extends Account {
 			$data[$this->clean($key)] = $this->clean($value);
 		}
 
-		if($data['photo_cache']) {
+		if(!empty($data['photo_cache'])) {
 			$data['photo_cache_path'] = $this->modx->config['rb_base_url'] . 'cache/images/' . $data['photo_cache'];
 		}
 
