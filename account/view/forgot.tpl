@@ -1,39 +1,39 @@
 <div class="container">
 	<form class="" method="post" action="" name="forgotform" id="forgotform">
-        <div class="row form-group">
-            <div class="col-xs-3">
-                <label class="control-label" for="email">Электронная почта <sup class="text-danger">*</sup></label>
-            </div>
-            <div class="col-xs-9">
-                <input class="form-control" type="text" id="email" name="email" value="<?= $email ?>" placeholder="mail@mail.ru">
+		<div class="row form-group">
+			<div class="col-xs-3">
+				<label class="control-label" for="email">Электронная почта <sup class="text-danger">*</sup></label>
+			</div>
+			<div class="col-xs-9">
+				<input class="form-control" type="text" id="email" name="email" value="<?= $email ?>" placeholder="mail@mail.ru">
 				<? if($error_email) { ?>
-                    <div class="text-danger">
+					<div class="text-danger">
 						<?= $error_email ?>
-                    </div>
+					</div>
 				<? } ?>
-            </div>
-        </div>
-        <div class="row form-group">
-            <div class="col-xs-3">
-                <label class="control-label" for="captcha">Проверочный код <sup class="text-danger">*</sup></label>
-            </div>
-            <div class="col-xs-9">
-                <input class="form-control" type="text" id="captcha" name="captcha">
+			</div>
+		</div>
+		<div class="row form-group">
+			<div class="col-xs-3">
+				<label class="control-label" for="captcha">Проверочный код <sup class="text-danger">*</sup></label>
+			</div>
+			<div class="col-xs-9">
+				<input class="form-control" type="text" id="captcha" name="captcha">
 				<? if($error_captcha) { ?>
-                    <div class="text-danger">
+					<div class="text-danger">
 						<?= $error_captcha ?>
-                    </div>
+					</div>
 				<? } ?>
-                <img src="assets/captcha" alt="captcha" width="120px" height="60px"/></div>
-        </div>
+				<img src="assets/captcha" alt="captcha" width="120px" height="60px"/></div>
+		</div>
 		<hr>
 		<div class="row form-group">
 			<div class="col-xs-3">&nbsp;</div>
 			<div class="col-xs-9 text-right">
-				<a href="<?= $cfg['pageLogin'] ?>" class="btn btn-primary">Войти
+				<a href="<?= $controllerLogin ?>" class="btn btn-primary">Войти
 					<i class="fa fa-sign-in"></i>
 				</a>
-				<a href="<?= $cfg['pageRegister'] ?>" class="btn btn-primary">Зарегистрироваться
+				<a href="<?= $controllerRegister ?>" class="btn btn-primary">Зарегистрироваться
 					<i class="fa fa-edit"></i>
 				</a>
 				<button class="btn btn-success" type="submit" name="action" value="forgot">Напомнить пароль
@@ -55,16 +55,16 @@
 				params = 'action=' + $(this).val() + '&' + $.param(config) + '&' + form.serialize();
 
 			$.ajax({
-				url: 'ajax?route=account/controller/forgot/ajax',
+				url: 'ajax.php?route=account/controller/forgot/ajax',
 				dataType: 'json',
 				type: 'post',
 				data: params,
 				beforeSend: function() {
-					form.fadeTo(250, 0.5);
-					$('.has-error').removeClass('has-error');
+					form.fadeTo(150, 0.5);
 				},
 				success: function(json) {
 					form.fadeTo(150, 1);
+					$('.has-error').removeClass('has-error');
 					$('div.text-danger').remove();
 
 					if(json['redirect']) {

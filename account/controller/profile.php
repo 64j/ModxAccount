@@ -4,44 +4,26 @@ if(!defined('MODX_BASE_PATH')) {
 	die('Unauthorized access.');
 }
 
-class ControllerAccountControllerProfile extends Loader {
-	protected $default_field = array(
-		'user' => array(
-			'username' => null,
-			'password' => null
-		),
-		'attribute' => array(
-			'fullname' => null,
-			'email' => null,
-			'phone' => null,
-			'mobilephone' => null,
-			'dob' => null,
-			'gender' => null,
-			'country' => null,
-			'state' => null,
-			'city' => null,
-			'zip' => null,
-			'fax' => null,
-			'photo' => null,
-			'comment' => null
-		)
-	);
-	private $error = array();
-	private $user;
+require_once(dirname(dirname(__FILE__)) . '/Account.abstract.php');
+
+class AccountControllerProfile extends Account {
+
+	public function index() {
+
+	}
 
 	/**
 	 * render form
 	 * @param $config
 	 */
-	public function index($config = array()) {
+	public function render($config = array()) {
 		$data = $config;
 		$data['json_config'] = json_encode($config);
 
-		if($userid = $this->modx->getLoginUserID('web')) {
-			foreach($this->modx->getWebUserInfo($userid) as $key => $value) {
+		if($this->getID()) {
+			foreach($this->user as $key => $value) {
 				if(!empty($value)) {
 					$data[$key] = $value;
-					$this->user[$key] = $value;
 				}
 			}
 		} else {
@@ -52,6 +34,10 @@ class ControllerAccountControllerProfile extends Loader {
 			$data['dob'] = date('d-m-Y', $data['dob']);
 		}
 
+		if(!empty($data['photo'])) {
+			$data['photo_no_cache'] = $data['photo'] . '?time=' . time();
+		}
+
 		foreach($_POST as $key => $value) {
 			$data[$this->clean($key)] = $this->clean($value);
 		}
@@ -59,24 +45,21 @@ class ControllerAccountControllerProfile extends Loader {
 		if($_REQUEST['action'] == 'logout') {
 			$data['action'] = 'logout';
 		}
-		$data['controllerLogout'] = $this->modx->makeUrl($this->modx->documentIdentifier) . '?action=logout';
 
-		switch($data['action']) {
-			case 'save':
-				if($this->validate($data)) {
-					$this->save($data);
-					if($config['success']) {
-						$this->modx->sendRedirect($config['success']);
-					} else {
-						$this->modx->sendRedirect($config['controllerProfile']);
-					}
-				}
-				break;
+		$data['controllerLogout'] = $config['controller'] . '?action=logout';
 
-			case 'logout':
-				$this->logout();
-				$this->modx->sendRedirect($config['controllerLogin']);
-				break;
+		if($data['action'] == 'save' && $this->validate($data)) {
+			$this->save($data);
+
+			if($config['success']) {
+				$this->modx->sendRedirect($config['success']);
+			} else {
+				$this->modx->sendRedirect($config['controllerProfile']);
+			}
+
+		} else if($data['action'] == 'logout') {
+			$this->logout();
+			$this->modx->sendRedirect($config['controllerLogin']);
 		}
 
 		foreach($this->error as $key => $value) {
@@ -93,28 +76,12 @@ class ControllerAccountControllerProfile extends Loader {
 			}
 		}
 
-		echo $this->modx->load->view('assets/snippets/account/view/profile.tpl', $data);
-	}
-
-	/**
-	 * trim/striptags/escape/
-	 * @param $data
-	 * @return array
-	 */
-	private function clean($data) {
-		if(is_array($data)) {
-			foreach($data as $key => $value) {
-				unset($data[$key]);
-				$data[$this->clean($key)] = $this->clean($value);
-			}
-		} else {
-			$data = trim($this->modx->stripTags($this->modx->db->escape($data)));
-		}
-		return $data;
+		echo $this->view('assets/snippets/account/view/profile.tpl', $data);
 	}
 
 	/**
 	 * validate form
+	 * @param $data
 	 * @return bool
 	 */
 	private function validate($data) {
@@ -240,33 +207,6 @@ class ControllerAccountControllerProfile extends Loader {
 	}
 
 	/**
-	 * mail validate
-	 * @param $email
-	 * @return bool
-	 */
-	private function mail_validate($email) {
-		return preg_match('/^[^@]+@.*.[a-z]{2,15}$/i', $email) == true;
-	}
-
-	/**
-	 * phone validate
-	 * @param $phone
-	 * @return bool
-	 */
-	private function phone_validate($phone) {
-		return preg_match('/^\+?[7|8][\ ]?[-\(]?\d{3}\)?[\- ]?\d{3}-?\d{2}-?\d{2}$/', $phone) == true;
-	}
-
-	/**
-	 * mail validate
-	 * @param $date
-	 * @return bool
-	 */
-	private function date_validate($date) {
-		return date('d-m-Y', strtotime($date)) == $date;
-	}
-
-	/**
 	 * custom filed validate ajax
 	 * @param $data
 	 * @param array $parents
@@ -318,7 +258,7 @@ class ControllerAccountControllerProfile extends Loader {
 
 		// data format
 		if(!empty($_FILES['photo']['tmp_name'])) {
-			$data['photo'] = $this->image($_FILES['photo']['tmp_name']);
+			$data['photo'] = $this->image($_FILES['photo']['tmp_name'], $data['email']);
 		}
 
 		if(!empty($data['photo_delete'])) {
@@ -335,7 +275,7 @@ class ControllerAccountControllerProfile extends Loader {
 		}
 
 		if(!empty($data['password'])) {
-			$this->send($data);
+			$this->send($data, $this->modx->config['websignupemail_message']);
 			$data['password'] = md5($data['password']);
 		}
 		//
@@ -348,7 +288,7 @@ class ControllerAccountControllerProfile extends Loader {
 			}
 		}
 		if(count($user) > 0) {
-			$this->modx->db->update($user, $this->modx->getFullTableName('web_users'), 'id=' . $this->user['internalKey']);
+			$this->modx->db->update($user, $this->modx->getFullTableName('web_users'), 'id=' . $this->getID());
 		}
 
 		// attribute
@@ -359,7 +299,7 @@ class ControllerAccountControllerProfile extends Loader {
 			}
 		}
 		if(count($attribute) > 0) {
-			$this->modx->db->update($attribute, $this->modx->getFullTableName('web_user_attributes'), 'id=' . $this->user['internalKey']);
+			$this->modx->db->update($attribute, $this->modx->getFullTableName('web_user_attributes'), 'id=' . $this->getID());
 		}
 
 		// custom field
@@ -367,7 +307,7 @@ class ControllerAccountControllerProfile extends Loader {
 			foreach($data['custom_field'] as $key => $value) {
 				if($key == 'address') {
 					$this->modx->db->insert(array(
-						'webuser' => $this->user['internalKey'],
+						'webuser' => $this->getID(),
 						'setting_name' => $key,
 						'setting_value' => is_array($value) ? serialize($value) : $value
 					), $this->modx->getFullTableName('web_user_settings'));
@@ -375,302 +315,136 @@ class ControllerAccountControllerProfile extends Loader {
 					$this->modx->db->query("REPLACE INTO " . $this->modx->getFullTableName('web_user_settings') . " (setting_name, setting_value) 
 					VALUES ('" . $key . "', 
 					'" . (is_array($value) ? serialize($value) : $value) . "')
-					WHERE id=" . $this->user['internalKey']);
+					WHERE id=" . $this->getID());
 				}
 			}
 		}
 
-		return $this->user['internalKey'];
-
-	}
-
-	/**
-	 * create image
-	 * @param $file
-	 * @param $filename
-	 * @return string
-	 */
-	private function image($file, $filename = '', $path = '') {
-		$url = '';
-		$thumb_width = 100;
-		$thumb_height = 100;
-
-		if(file_exists($file)) {
-
-			$info = getimagesize($file);
-			$width = $info[0];
-			$height = $info[1];
-			$mime = isset($info['mime']) ? $info['mime'] : '';
-
-			if($mime == 'image/gif') {
-				$image = imagecreatefromgif($file);
-			} else if($mime == 'image/png') {
-				$image = imagecreatefrompng($file);
-			} else if($mime == 'image/jpeg') {
-				$image = imagecreatefromjpeg($file);
-			} else {
-				$image = imagecreatefromjpeg($file);
-			}
-
-			if(($width / $height) >= ($thumb_width / $thumb_height)) {
-				$new_height = $thumb_height;
-				$new_width = $width / ($height / $thumb_height);
-			} else {
-				$new_width = $thumb_width;
-				$new_height = $height / ($width / $thumb_width);
-			}
-
-			$xpos = 0 - ($new_width - $thumb_width) / 2;
-			$ypos = 0 - ($new_height - $thumb_height) / 2;
-
-			$thumb = imagecreatetruecolor($thumb_width, $thumb_height);
-			imagecopyresampled($thumb, $image, $xpos, $ypos, 0, 0, $new_width, $new_height, $width, $height);
-
-			if(!file_exists($this->modx->config['rb_base_url'] . 'images/users')) {
-				mkdir($this->modx->config['base_path'] . $this->modx->config['rb_base_url'] . 'images/users', 0755, true);
-			}
-
-			if(empty($filename)) {
-				$filename = md5(filemtime($file));
-			} else {
-				$filename = $filename . '.' . substr(md5(filemtime($file)), 0, 3);
-			}
-
-			if(empty($path)) {
-				$path = $this->modx->config['rb_base_url'] . 'images/users/';
-			}
-
-			$ext = '.jpg';
-			$url = $path . $filename . $ext;
-			$filename = $this->modx->config['base_path'] . $path . $filename . $ext;
-
-			@unlink($file);
-
-			imagejpeg($thumb, $filename, '100');
-			imagedestroy($thumb);
-			imagedestroy($image);
-
-		} else {
-
-			$this->error['photo'] = 'Ошибка создания изображения ' . $file . '.';
-
-		}
-
-		return $url;
-	}
-
-	/**
-	 * send mail
-	 * @param array $data
-	 */
-	private function send($data = array()) {
-
-		$message_tpl = $this->modx->config['websignupemail_message'];
-		$emailsender = $this->modx->config['emailsender'];
-		$emailsubject = $this->modx->config['emailsubject'];
-		$site_name = $this->modx->config['site_name'];
-		$site_url = $this->modx->config['site_url'];
-
-		$message = str_replace('[+uid+]', (!empty($data['username']) ? $data['username'] : $data['email']), $message_tpl);
-		$message = str_replace('[+pwd+]', $data['password'], $message);
-		$message = str_replace('[+ufn+]', $data['fullname'], $message);
-		$message = str_replace('[+sname+]', $site_name, $message);
-		$message = str_replace('[+semail+]', $emailsender, $message);
-		$message = str_replace('[+surl+]', $site_url, $message);
-
-		foreach($data as $name => $value) {
-			$message = str_replace('[+post.' . $name . '+]', $value, $message);
-		}
-
-		// Bring in php mailer!
-		require_once MODX_MANAGER_PATH . 'includes/controls/class.phpmailer.php';
-		$mail = new PHPMailer();
-		$mail->CharSet = $this->modx->config['modx_charset'];
-		$mail->From = $emailsender;
-		$mail->FromName = $site_name;
-		$mail->Subject = $emailsubject;
-		$mail->Body = $message;
-		$mail->addAddress($data['email'], $data['fullname']);
-
-		if(!$mail->send()) {
-			$this->error['send_mail'] = 'Ошибка отправки письма.';
-		}
+		return $this->getID();
 	}
 
 	/**
 	 * login out
 	 */
 	public function logout() {
-		if($userid = $this->modx->getLoginUserID('web')) {
+		if($this->getID()) {
 			$this->modx->db->update(array(
 				'lastlogin' => time(),
 				'thislogin' => 0
-			), $this->modx->getFullTableName('web_user_attributes'), 'id=' . $userid);
+			), $this->modx->getFullTableName('web_user_attributes'), 'id=' . $this->getID());
 		}
-		$this->SessionHandlerDestroy();
-	}
-
-
-	/**
-	 * SessionHandlerDestroy
-	 * @param string $cookieName
-	 */
-	private function SessionHandlerDestroy($cookieName = 'WebLoginPE') {
-		if(isset($_SESSION['mgrValidated'])) {
-			unset($_SESSION['webShortname']);
-			unset($_SESSION['webFullname']);
-			unset($_SESSION['webEmail']);
-			unset($_SESSION['webValidated']);
-			unset($_SESSION['webInternalKey']);
-			unset($_SESSION['webValid']);
-			unset($_SESSION['webUser']);
-			unset($_SESSION['webFailedlogins']);
-			unset($_SESSION['webLastlogin']);
-			unset($_SESSION['webnrlogins']);
-			unset($_SESSION['webUsrConfigSet']);
-			unset($_SESSION['webUserGroupNames']);
-			unset($_SESSION['webDocgroups']);
-
-			setcookie($cookieName, '', time() - 60, '/');
-		} else {
-			if(isset($_COOKIE[session_name()])) {
-				setcookie(session_name(), '', time() - 60, '/');
-			}
-			setcookie($cookieName, '', time() - 60, '/');
-			session_destroy();
-		}
+		$this->SessionHandler('destroy');
 	}
 
 	/**
 	 * ajax
 	 * @param $config
+	 * @return string
 	 */
 	public function ajax($config) {
 		$json = array();
 
-		if($_SERVER['REQUEST_METHOD'] == 'POST') {
-			if($userid = $this->modx->getLoginUserID('web')) {
+		if($this->getID()) {
+			$data['ajax'] = true;
 
-				$data['ajax'] = true;
+			foreach($_POST as $key => $value) {
+				$data[$this->clean($key)] = $this->clean($value);
+			}
 
-				foreach($this->modx->getWebUserInfo($userid) as $key => $value) {
-					if(!empty($value)) {
-						$this->user[$key] = $value;
+			if($data['action'] == 'save' && $this->validate($data)) {
+				$userid = $this->save($data);
+
+				if($userid && !$this->error) {
+					$json['success']['password'] = '';
+					$json['success']['confirm'] = '';
+					if($config['success']) {
+						$json['redirect'] = $config['success'];
 					}
+
+				} else {
+					$json['error'] = $this->error;
+
 				}
 
-				foreach($_POST as $key => $value) {
-					$data[$this->clean($key)] = $this->clean($value);
-				}
+			} else if($data['action'] == 'logout') {
+				$this->logout();
+				$json['redirect'] = $config['controllerLogin'];
 
-				switch($data['action']) {
-					case 'save':
-						if($this->validate($data)) {
-							$userid = $this->save($data);
-							if($userid && !$this->error) {
-								$json['success']['password'] = '';
-								$json['success']['confirm'] = '';
-								if($config['success']) {
-									$json['redirect'] = $config['success'];
-								}
-							} else {
-								$json['error'] = $this->error;
-							}
-						} else {
-							$json['error'] = $this->error;
-						}
-						break;
-
-					case 'logout':
-						$this->logout();
-						$json['redirect'] = $config['controllerLogin'];
-						break;
-				}
 			} else {
-				$json['redirect'] = $config['controllerRegister'];
+				$json['error'] = $this->error;
+
 			}
 		} else {
-			$this->modx->sendRedirect('/');
+			$json['redirect'] = $config['controllerRegister'];
+
 		}
 
-		header('Content-Type: application/json');
-		echo json_encode($json);
+		header('content-type: application/json');
+		return json_encode($json);
 	}
 
 	/**
 	 * add photo
 	 * @param array $config
+	 * @return string
 	 */
 	public function add_photo($config = array()) {
 		$json = array();
 
-		if($_SERVER['REQUEST_METHOD'] == 'POST') {
-			if($userid = $this->modx->getLoginUserID('web')) {
+		if($this->getID()) {
+			if(!empty($_FILES['photo']['tmp_name'])) {
+				$info = getimagesize($_FILES['photo']['tmp_name']);
+				$types = array(
+					'image/gif',
+					'image/png',
+					'image/jpeg',
+					'image/jpg'
+				);
+				$size = 102400;
 
-				$this->user = $this->modx->getWebUserInfo($userid);
-
-				if(!empty($_FILES['photo']['tmp_name'])) {
-					$info = getimagesize($_FILES['photo']['tmp_name']);
-					$types = array(
-						'image/gif',
-						'image/png',
-						'image/jpeg',
-						'image/jpg'
-					);
-					$size = 102400;
-
-					if(!in_array($info['mime'], $types)) {
-						$json['error'] = 'Выберите файл изображения. Неверный формат файла.';
-					} else if($_FILES['photo']['size'] >= $size) {
-						$json['error'] = 'Файл изображения превышает допустимые размеры.';
-					} else {
-						$path = $this->image($_FILES['photo']["tmp_name"]);
-						@unlink(MODX_BASE_PATH . $this->user['photo']);
-						$this->modx->db->update(array(
-							'photo' => $path
-						), $this->modx->getFullTableName('web_user_attributes'), 'id=' . $this->user['internalKey']);
-						$json['name'] = basename($path);
-						$json['path'] = $path;
-					}
+				if(!in_array($info['mime'], $types)) {
+					$json['error'] = 'Выберите файл изображения. Неверный формат файла.';
+				} else if($_FILES['photo']['size'] >= $size) {
+					$json['error'] = 'Файл изображения превышает допустимые размеры.';
+				} else {
+					$path = $this->image($_FILES['photo']["tmp_name"], $this->user['email']);
+					@unlink(MODX_BASE_PATH . $this->user['photo']);
+					$this->modx->db->update(array(
+						'photo' => $path
+					), $this->modx->getFullTableName('web_user_attributes'), 'id=' . $this->getID());
+					$json['name'] = basename($path);
+					$json['path'] = $path;
 				}
-			} else {
-				$json['redirect'] = $config['controllerRegister'];
 			}
 		} else {
-			$this->modx->sendRedirect('/');
+			$json['redirect'] = $config['controllerRegister'];
 		}
 
-		header('Content-Type: application/json');
-		echo json_encode($json);
+		header('content-type: application/json');
+		return json_encode($json);
 	}
 
 	/**
 	 * delete photo
 	 * @param $config
+	 * @return string
 	 */
 	public function del_photo($config) {
 		$json = array();
 
-		if($_SERVER['REQUEST_METHOD'] == 'POST') {
-			if($userid = $this->modx->getLoginUserID('web')) {
-
-				$this->user = $this->modx->getWebUserInfo($userid);
-
-				if(!empty($this->user['photo'])) {
-					@unlink(MODX_BASE_PATH . $this->user['photo']);
-					$this->modx->db->update(array(
-						'photo' => ''
-					), $this->modx->getFullTableName('web_user_attributes'), 'id=' . $this->user['internalKey']);
-				}
-			} else {
-				$json['redirect'] = $config['controllerRegister'];
+		if($this->getID()) {
+			if(!empty($this->user['photo'])) {
+				@unlink(MODX_BASE_PATH . $this->user['photo']);
+				$this->modx->db->update(array(
+					'photo' => ''
+				), $this->modx->getFullTableName('web_user_attributes'), 'id=' . $this->getID());
 			}
 		} else {
-			$this->modx->sendRedirect('/');
+			$json['redirect'] = $config['controllerRegister'];
 		}
 
-		header('Content-Type: application/json');
-		echo json_encode($json);
+		header('content-type: application/json');
+		return json_encode($json);
 	}
 
 }

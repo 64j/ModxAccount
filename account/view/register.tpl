@@ -1,19 +1,19 @@
 <div class="container">
-    <form class="" method="post" action="" name="regform" id="regform" enctype="multipart/form-data">
-        <div class="row form-group">
-            <div class="col-xs-3">
-                <label class="control-label" for="fullname">ФИО <sup class="text-danger">*</sup></label>
-            </div>
-            <div class="col-xs-9">
-                <input class="form-control" type="text" id="fullname" name="fullname" value="<?= $fullname ?>" placeholder="Иванов Иван Иванович">
+	<form class="" method="post" action="" name="regform" id="regform" enctype="multipart/form-data">
+		<div class="row form-group">
+			<div class="col-xs-3">
+				<label class="control-label" for="fullname">ФИО <sup class="text-danger">*</sup></label>
+			</div>
+			<div class="col-xs-9">
+				<input class="form-control" type="text" id="fullname" name="fullname" value="<?= $fullname ?>" placeholder="Иванов Иван Иванович">
 				<? if($error_fullname) { ?>
-                    <div class="text-danger">
+					<div class="text-danger">
 						<?= $error_fullname ?>
-                    </div>
+					</div>
 				<? } ?>
-            </div>
-        </div>
-<!--		
+			</div>
+		</div>
+		<!--
         <div class="row form-group">
             <div class="col-xs-3">
                 <label class="control-label" for="street">Улица2</label>
@@ -66,7 +66,7 @@
 				<? } ?>
             </div>
         </div>-->
-<!--		
+		<!--
         <div class="row form-group">
             <div class="col-xs-3">
                 <label class="control-label" for="firstname">Имя <sup class="text-danger">*</sup></label>
@@ -94,20 +94,20 @@
             </div>
         </div>
 		-->
-        <div class="row form-group">
-            <div class="col-xs-3">
-                <label class="control-label" for="email">Электронная почта <sup class="text-danger">*</sup></label>
-            </div>
-            <div class="col-xs-9">
-                <input class="form-control" type="text" id="email" name="email" value="<?= $email ?>" placeholder="mail@mail.ru">
+		<div class="row form-group">
+			<div class="col-xs-3">
+				<label class="control-label" for="email">Электронная почта <sup class="text-danger">*</sup></label>
+			</div>
+			<div class="col-xs-9">
+				<input class="form-control" type="text" id="email" name="email" value="<?= $email ?>" placeholder="mail@mail.ru">
 				<? if($error_email) { ?>
-                    <div class="text-danger">
+					<div class="text-danger">
 						<?= $error_email ?>
-                    </div>
+					</div>
 				<? } ?>
-            </div>
-        </div>
-<!--		
+			</div>
+		</div>
+		<!--
         <div class="row form-group">
             <div class="col-xs-3">
                 <label class="control-label" for="phone">Телефон <sup class="text-danger">*</sup></label>
@@ -234,18 +234,18 @@
             </div>
         </div>
 		-->
-		
-        <div class="row form-group">
-            <div class="col-xs-3">
-                <label class="control-label" for="photo">Фото</label>
-            </div>
-            <div class="col-xs-9">
-                <input type="file" id="photo" name="photo" class="hidden">
-                <p class="help-block">Выберите изображение. Размер файла не должен превышать 100 КБ</p>
+
+		<div class="row form-group">
+			<div class="col-xs-3">
+				<label class="control-label" for="photo">Фото</label>
+			</div>
+			<div class="col-xs-9">
+				<input type="file" id="photo" name="photo" class="hidden">
+				<p class="help-block">Выберите изображение. Размер файла не должен превышать 100 КБ</p>
 				<? if($error_photo) { ?>
-                    <div class="text-danger">
+					<div class="text-danger">
 						<?= $error_photo ?>
-                    </div>
+					</div>
 				<? } ?>
 				<? if($photo_cache) { ?>
 					<input type="hidden" id="photo_cache" name="photo_cache" value="<?= $photo_cache ?>">
@@ -254,78 +254,78 @@
 				<? } else { ?>
 					<label class="btn btn-primary btn-xs btn-add-photo">Добавить</label>
 				<? } ?>
-            </div>
-        </div>
-		
-        <hr>
-        <div class="row form-group">
-            <div class="col-xs-3">
-                <label class="control-label" for="password">Пароль <sup class="text-danger">*</sup></label>
-            </div>
-            <div class="col-xs-9">
-                <input class="form-control" type="password" id="password" name="password">
+			</div>
+		</div>
+
+		<hr>
+		<div class="row form-group">
+			<div class="col-xs-3">
+				<label class="control-label" for="password">Пароль <sup class="text-danger">*</sup></label>
+			</div>
+			<div class="col-xs-9">
+				<input class="form-control" type="password" id="password" name="password">
 				<? if($error_password) { ?>
-                    <div class="text-danger">
+					<div class="text-danger">
 						<?= $error_password ?>
-                    </div>
+					</div>
 				<? } ?>
-            </div>
-        </div>
-        <div class="row form-group">
-            <div class="col-xs-3">
-                <label class="control-label" for="confirm">Подтверждение пароля <sup class="text-danger">*</sup></label>
-            </div>
-            <div class="col-xs-9">
-                <input class="form-control" type="password" id="confirm" name="confirm">
+			</div>
+		</div>
+		<div class="row form-group">
+			<div class="col-xs-3">
+				<label class="control-label" for="confirm">Подтверждение пароля <sup class="text-danger">*</sup></label>
+			</div>
+			<div class="col-xs-9">
+				<input class="form-control" type="password" id="confirm" name="confirm">
 				<? if($error_confirm) { ?>
-                    <div class="text-danger">
+					<div class="text-danger">
 						<?= $error_confirm ?>
-                    </div>
+					</div>
 				<? } ?>
-            </div>
-        </div>
-        <div class="row form-group">
-            <div class="col-xs-3">
-                <label class="control-label" for="captcha">Проверочный код <sup class="text-danger">*</sup></label>
-            </div>
-            <div class="col-xs-9">
-                <input class="form-control" type="text" id="captcha" name="captcha">
+			</div>
+		</div>
+		<div class="row form-group">
+			<div class="col-xs-3">
+				<label class="control-label" for="captcha">Проверочный код <sup class="text-danger">*</sup></label>
+			</div>
+			<div class="col-xs-9">
+				<input class="form-control" type="text" id="captcha" name="captcha">
 				<? if($error_captcha) { ?>
-                    <div class="text-danger">
+					<div class="text-danger">
 						<?= $error_captcha ?>
-                    </div>
+					</div>
 				<? } ?>
-                <img src="assets/captcha" alt="captcha" width="120px" height="60px"/></div>
-        </div>
-        <hr>
-        <div class="row form-group">
-            <div class="col-xs-3">&nbsp;</div>
-            <div class="col-xs-9 text-right">
-                <a href="<?= $controllerLogin ?>" class="btn btn-primary">Войти
-                    <i class="fa fa-sign-in"></i>
-                </a>
-                <a href="<?= $controllerForgot ?>" class="btn btn-primary">
-                    Напомнить пароль <i class="fa fa-unlock"></i>
-                </a>
-                <button class="btn btn-success" type="submit" name="action" value="register">Зарегистрироваться
-                    <i class="fa fa-edit"></i>
-                </button>
-            </div>
-        </div>
-    </form>
+				<img src="assets/captcha" alt="captcha" width="120px" height="60px"/></div>
+		</div>
+		<hr>
+		<div class="row form-group">
+			<div class="col-xs-3">&nbsp;</div>
+			<div class="col-xs-9 text-right">
+				<a href="<?= $controllerLogin ?>" class="btn btn-primary">Войти
+					<i class="fa fa-sign-in"></i>
+				</a>
+				<a href="<?= $controllerForgot ?>" class="btn btn-primary">
+					Напомнить пароль <i class="fa fa-unlock"></i>
+				</a>
+				<button class="btn btn-success" type="submit" name="action" value="register">Зарегистрироваться
+					<i class="fa fa-edit"></i>
+				</button>
+			</div>
+		</div>
+	</form>
 </div>
 <script type="text/javascript">
-$(document).ready(function() {
-	
-	var config = <?php echo $json_config ?>;
-	
+	$(document).ready(function() {
+
+		var config = <?php echo $json_config ?>;
+
 		$(document).delegate('.btn-del-photo', 'click', function(e) {
 			var $this = $(this),
 				$parent = $this.parent(),
 				$row = $this.closest('.form-group');
 
 			jQuery.ajax({
-				url: 'ajax?route=account/controller/register/del_photo',
+				url: 'ajax.php?route=account/controller/register/del_photo',
 				type: 'POST',
 				dataType: 'json',
 				data: $.param(config) + '&photo=' + $('img', $parent).attr('src'),
@@ -359,7 +359,9 @@ $(document).ready(function() {
 				formData = new FormData();
 
 			formData.append('photo', file);
-			formData.append('controllerProfile', config.controllerProfile);
+			for(var i in config) {
+				formData.append(i, config[i]);
+			}
 			$('div.text-danger', $row).remove();
 
 			if(file.size > 102400) {
@@ -368,7 +370,7 @@ $(document).ready(function() {
 				$('#photo').parent().append('<div class="text-danger">Выберите файл изображения. Неверный формат файла.</div>');
 			} else {
 				jQuery.ajax({
-					url: 'ajax?route=account/controller/register/add_photo',
+					url: 'ajax.php?route=account/controller/register/add_photo',
 					type: 'POST',
 					dataType: 'json',
 					data: formData,
@@ -391,39 +393,39 @@ $(document).ready(function() {
 			}
 		});
 
-    $('#regform2 :submit').click(function(e) {
-        e.preventDefault();
+		$('#regform :submit').click(function(e) {
+			e.preventDefault();
 
-        var form = $(this).closest('form'),
-            params = 'action=' + $(this).val() + '&' + $.param(config) + '&' + form.serialize();
+			var form = $(this).closest('form'),
+				params = 'action=' + $(this).val() + '&' + $.param(config) + '&' + form.serialize();
 
-        $.ajax({
-            url: 'ajax?route=account/controller/register/ajax',
-            dataType: 'json',
-            type: 'post',
-            data: params,
-            beforeSend: function() {
-				form.fadeTo(250, 0.5);
-                $('.has-error').removeClass('has-error')
-            },
-            success: function(json) {
-				form.fadeTo(150, 1);
-                $('div.text-danger').remove();
-				
-                if(json['redirect']) {
-                    location = json['redirect'];
-                } else if(json['error']) {					
-                    for(i in json['error']) {					
-                        var $field = $('[name="' + i + '"]', form);
-                        $field.closest('.form-group').addClass('has-error');
-                        $field.closest('div').append('<div class="text-danger">' + json['error'][i] + '</div>');
-                    }
-                }
-            },
-            error: function(xhr, ajaxOptions, thrownError) {
-                alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
-            }
-        });
-    });
-});
+			$.ajax({
+				url: 'ajax.php?route=account/controller/register/ajax',
+				dataType: 'json',
+				type: 'post',
+				data: params,
+				beforeSend: function() {
+					form.fadeTo(150, 0.5);
+				},
+				success: function(json) {
+					form.fadeTo(150, 1);
+					$('.has-error').removeClass('has-error');
+					$('div.text-danger').remove();
+
+					if(json['redirect']) {
+						location = json['redirect'];
+					} else if(json['error']) {
+						for(i in json['error']) {
+							var $field = $('[name="' + i + '"]', form);
+							$field.closest('.form-group').addClass('has-error');
+							$field.closest('div').append('<div class="text-danger">' + json['error'][i] + '</div>');
+						}
+					}
+				},
+				error: function(xhr, ajaxOptions, thrownError) {
+					alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+				}
+			});
+		});
+	});
 </script>

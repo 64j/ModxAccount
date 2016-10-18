@@ -123,7 +123,7 @@
 					</div>
 				<? } ?>
 				<? if($photo) { ?>
-					<img src="<?= $photo ?>" alt=""/>
+					<img src="<?= $photo_no_cache ?>" alt=""/>
 					<label class="btn btn-danger btn-xs btn-del-photo">Удалить</label>
 				<? } else { ?>
 					<label class="btn btn-primary btn-xs btn-add-photo">Добавить</label>
@@ -184,7 +184,7 @@
 				$row = $this.closest('.form-group');
 
 			jQuery.ajax({
-				url: 'ajax?route=account/controller/profile/del_photo',
+				url: 'ajax.php?route=account/controller/profile/del_photo',
 				type: 'POST',
 				dataType: 'json',
 				data: $.param(config),
@@ -218,7 +218,9 @@
 				formData = new FormData();
 
 			formData.append('photo', file);
-			formData.append('controllerRegister', config.controllerRegister);
+			for(var i in config) {
+				formData.append(i, config[i]);
+			}
 			$('div.text-danger', $row).remove();
 
 			if(file.size > 102400) {
@@ -227,7 +229,7 @@
 				$('#photo').parent().append('<div class="text-danger">Выберите файл изображения. Неверный формат файла.</div>');
 			} else {
 				jQuery.ajax({
-					url: 'ajax?route=account/controller/profile/add_photo',
+					url: 'ajax.php?route=account/controller/profile/add_photo',
 					type: 'POST',
 					dataType: 'json',
 					data: formData,
@@ -240,7 +242,8 @@
 						} else if(json['path']) {
 							$('.btn-add-photo', $row).remove();
 							$('[name=photo]').val('');
-							$parent.append('<img src="' + json['path'] + '" alt="" width="100px" height="auto" /> <label class="btn btn-danger btn-xs btn-del-photo">Удалить</label>');
+							var date = new Date();
+							$parent.append('<img src="' + json['path'] + '?time=' + date.getTime() + '" alt="" width="100px" height="auto" /> <label class="btn btn-danger btn-xs btn-del-photo">Удалить</label>');
 						}
 					},
 					error: function(xhr, ajaxOptions, thrownError) {
@@ -257,18 +260,18 @@
 				params = 'action=' + $(this).val() + '&' + $.param(config) + '&' + form.serialize();
 
 			$.ajax({
-				url: 'ajax?route=account/controller/profile/ajax',
+				url: 'ajax.php?route=account/controller/profile/ajax',
 				dataType: 'json',
 				type: 'post',
 				data: params,
 				cache: false,
 				beforeSend: function() {
-					form.fadeTo(250, 0.5);
-					$('.has-error').removeClass('has-error')
+					form.fadeTo(150, 0.5);
 				},
 				success: function(json) {
 					form.fadeTo(150, 1);
 					$('div.text-danger, div.text-success').remove();
+					$('.has-error').removeClass('has-error');
 
 					if(json['redirect']) {
 						location = json['redirect'];
