@@ -55,16 +55,16 @@
 				params = 'action=' + $(this).val() + '&' + $.param(config) + '&' + form.serialize();
 
 			$.ajax({
-				url: 'ajax?route=account/controller/login/ajax',
+				url: 'ajax.php?route=account/controller/login/ajax',
 				dataType: 'json',
 				type: 'post',
 				data: params,
 				beforeSend: function() {
-					form.fadeTo(250, 0.5);
-					$('.has-error').removeClass('has-error');
+					form.fadeTo(150, 0.5);
 				},
 				success: function(json) {
 					form.fadeTo(150, 1);
+					$('.has-error').removeClass('has-error');
 					$('div.text-danger').remove();
 
 					if(json['redirect']) {
