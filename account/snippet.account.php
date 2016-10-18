@@ -1,7 +1,7 @@
 <?php
 
 if(!defined('MODX_BASE_PATH')) {
-	die('HACK???');
+	die('Unauthorized access.');
 }
 
 $config = array();
@@ -16,18 +16,26 @@ $config['keyVeriWord'] = time();
 
 switch($config['controller']) {
 	case $config['controllerLogin']:
-		$modx->load->controller('account/controller/login', $config);
+		include_once('controller/login.php');
+		$controller = new AccountControllerLogin($modx);
+		$controller->render($config);
 		break;
 
 	case $config['controllerRegister']:
-		$modx->load->controller('account/controller/register', $config);
+		include_once('controller/register.php');
+		$controller = new AccountControllerRegister($modx);
+		$controller->render($config);
 		break;
 
 	case $config['controllerForgot']:
-		$modx->load->controller('account/controller/forgot', $config);
+		include_once('controller/forgot.php');
+		$controller = new AccountControllerForgot($modx);
+		$controller->render($config);
 		break;
 
 	case $config['controllerProfile']:
-		$modx->load->controller('account/controller/profile', $config);
+		include_once('controller/profile.php');
+		$controller = new AccountControllerProfile($modx);
+		$controller->render($config);
 		break;
 }
