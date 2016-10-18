@@ -16,11 +16,11 @@ if(empty($controller)) {
 	$controller = $modx->documentIdentifier;
 }
 
-$config['controller'] = !empty($controller) ? (is_numeric($controller) ? $modx->makeUrl($controller) : '/' . ltrim($controller, '/')) : 'account';
-$config['controllerRegister'] = !empty($controllerRegister) ? (is_numeric($controllerRegister) ? $modx->makeUrl($controllerRegister) : '/' . ltrim($controllerRegister, '/')) : 'account/register';
-$config['controllerLogin'] = !empty($controllerLogin) ? (is_numeric($controllerLogin) ? $modx->makeUrl($controllerLogin) : '/' . ltrim($controllerLogin, '/')) : 'account';
-$config['controllerForgot'] = !empty($controllerForgot) ? (is_numeric($controllerForgot) ? $modx->makeUrl($controllerForgot) : '/' . ltrim($controllerForgot, '/')) : 'account/forgot';
-$config['controllerProfile'] = !empty($controllerProfile) ? (is_numeric($controllerProfile) ? $modx->makeUrl($controllerProfile) : '/' . ltrim($controllerProfile, '/')) : 'account/profile';
+$config['controller'] = !empty($controller) ? (is_numeric($controller) ? $modx->makeUrl($controller) : '/' . ltrim($controller, '/')) : '/account';
+$config['controllerRegister'] = !empty($controllerRegister) ? (is_numeric($controllerRegister) ? $modx->makeUrl($controllerRegister) : '/' . ltrim($controllerRegister, '/')) : '/account/register';
+$config['controllerLogin'] = !empty($controllerLogin) ? (is_numeric($controllerLogin) ? $modx->makeUrl($controllerLogin) : '/' . ltrim($controllerLogin, '/')) : '/account';
+$config['controllerForgot'] = !empty($controllerForgot) ? (is_numeric($controllerForgot) ? $modx->makeUrl($controllerForgot) : '/' . ltrim($controllerForgot, '/')) : '/account/forgot';
+$config['controllerProfile'] = !empty($controllerProfile) ? (is_numeric($controllerProfile) ? $modx->makeUrl($controllerProfile) : '/' . ltrim($controllerProfile, '/')) : '/account/profile';
 $config['success'] = !empty($success) ? (is_numeric($success) ? $modx->makeUrl($success) : '/' . ltrim($success, '/')) : '';
 $config['userGroupId'] = !empty($userGroupId) ? $userGroupId : '';
 $config['keyVeriWord'] = time();
