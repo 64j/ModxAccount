@@ -56,7 +56,7 @@ class AccountControllerRegister extends Account {
 			asort($_country_lang);
 			$data['country_select'] = '<option value="">-- выбрать --</option>';
 			foreach($_country_lang as $key => $country) {
-				$data['country_select'] .= '<option value="' . $key . '"' . (isset($data['country']) && $data['country'] == $key ? ' selected="selected"' : '') . '">' . $country . '</option>';
+				$data['country_select'] .= '<option value="' . $key . '"' . (isset($data['country']) && $data['country'] == $key ? ' selected="selected"' : '') . '>' . $country . '</option>';
 			}
 		}
 		
