@@ -32,7 +32,7 @@ class AccountControllerRegister extends Account {
 			$data['photo_cache_path'] = $this->modx->config['rb_base_url'] . 'cache/images/' . $data['photo_cache'];
 		}
 
-		if($data['action'] == 'register' && $this->validate($data)) {
+		if(isset($data['action']) && $data['action'] == 'register' && $this->validate($data)) {
 			$userid = $this->add($data);
 			if($userid && !$this->error) {
 				$this->send($data, $this->modx->config['websignupemail_message']);
