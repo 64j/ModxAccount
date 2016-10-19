@@ -79,6 +79,14 @@ class AccountControllerProfile extends Account {
 		if(empty($config['tpl'])) {
 			echo $this->view('assets/snippets/account/view/profile.tpl', $data);
 		} else {
+			
+			foreach($data as $key => $value) {
+				if(is_array($value)) {
+					unset($data[$key]);
+					$data = array_merge($data, $this->array_keys_to_string(array($key => $value)));
+				}
+			}
+			
 			echo $this->modx->parseText($this->modx->getTpl($config['tpl']), $data);
 		}
 	}
