@@ -28,7 +28,7 @@ class AccountControllerForgot extends Account {
 			$data[$this->clean($key)] = $this->clean($value);
 		}
 
-		if($data['action'] == 'forgot' && $this->validate($data)) {
+		if(isset($data['action']) && $data['action'] == 'forgot' && $this->validate($data)) {
 			$this->forgot($data);
 
 			if($config['success']) {
@@ -68,11 +68,11 @@ class AccountControllerForgot extends Account {
 			}
 		}
 
-		if(isset($data['captcha_' . $data['keyVeriWord']]) && $_SESSION['veriword_' . md5($data['keyVeriWord'])] !== $data['captcha_' . $data['keyVeriWord']]) {
+		if(isset($data['captcha_' . $data['keyVeriWord']]) && isset($_SESSION['veriword_' . md5($data['keyVeriWord'])]) && $_SESSION['veriword_' . md5($data['keyVeriWord'])] !== $data['captcha_' . $data['keyVeriWord']]) {
 			$this->error['captcha_' . $data['keyVeriWord']] = 'Неверный проверочный код.';
 		}
 
-		if(isset($data['captcha']) && $_SESSION['veriword'] !== $data['captcha']) {
+		if(isset($data['captcha']) && isset($_SESSION['veriword']) && $_SESSION['veriword'] !== $data['captcha']) {
 			$this->error['captcha'] = 'Неверный проверочный код.';
 		}
 
