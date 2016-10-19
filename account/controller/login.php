@@ -45,7 +45,7 @@ class AccountControllerLogin extends Account {
 		if(empty($config['tpl'])) {
 			echo $this->view('assets/snippets/account/view/login.tpl', $data);
 		} else {
-			echo $this->modx->parseText($this->modx->getTpl($config['tpl']), $data, '[+', '+]');
+			echo $this->modx->parseText($this->modx->getTpl($config['tpl']), $data);
 		}
 
 	}
