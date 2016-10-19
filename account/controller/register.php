@@ -59,7 +59,12 @@ class AccountControllerRegister extends Account {
 				$data['country_select'] .= '<option value="' . $key . '"' . (isset($data['country']) && $data['country'] == $key ? ' selected="selected"' : '') . '">' . $country . '</option>';
 			}
 		}
-		echo $this->view('assets/snippets/account/view/register.tpl', $data);
+		
+		if(empty($config['tpl'])) {
+			echo $this->view('assets/snippets/account/view/register.tpl', $data);
+		} else {
+			echo $this->modx->parseText($this->modx->getTpl($config['tpl']), $data);
+		}
 	}
 
 	/**
