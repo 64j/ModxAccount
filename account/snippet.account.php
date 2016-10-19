@@ -25,6 +25,7 @@ $config['controllerProfile'] = !empty($controllerProfile) ? (is_numeric($control
 $config['success'] = !empty($success) ? (is_numeric($success) ? $modx->makeUrl($success) : '/' . ltrim($success, '/')) : '';
 $config['userGroupId'] = !empty($userGroupId) ? $userGroupId : '';
 $config['keyVeriWord'] = time();
+$config['tpl'] = isset($tpl) ? $tpl : '';
 
 switch($config['controller']) {
 	case $config['controllerLogin']:
