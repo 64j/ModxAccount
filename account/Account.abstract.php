@@ -112,7 +112,34 @@ abstract class Account {
 	protected function date_validate($date) {
 		return date('d-m-Y', strtotime($date)) == $date;
 	}
-
+	
+	/**
+	 * custom array keys to string
+	 * @param $data
+	 * @param array $parents
+	 * @param array $delimiter
+	 */
+	protected function array_keys_to_string($data, $parents = array(), $delimiter = array('', '.', '')) {
+		$result = array();
+		
+		foreach($data as $key => $value) {
+			$group = $parents;
+			array_push($group, $key);
+			if(is_array($value)) {
+				$result = $this->array_keys_to_string($value, $group, $delimiter);
+				continue;
+			}
+			if(!empty($parents)) {
+				if(!empty($value)) {
+					$result[$delimiter[0] . implode($delimiter[1], $group) . $delimiter[2]] = $value;
+				}
+				continue;
+			}
+		}
+		
+		return $result;
+	}
+	
 	/**
 	 * view template
 	 * @param $template
