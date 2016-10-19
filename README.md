@@ -88,9 +88,19 @@ require MODX_BASE_PATH.'assets/snippets/account/snippet.account.php';
 <pre>
 [!account?&userGroupId=``!]
 </pre>
+либо использовать свои шаблоны
+<pre>
+[!account?
+&tpl=`@FILE:assets/snippets/account/view/register.tpl.txt`
+&userGroupId=``
+!]
+</pre>
 
 <h3>AJAX</h3>
 <p>Для работы через ajax используется <b>ModxLoader</b> - https://github.com/64j/ModxLoader </p>
 
 <h3>Капча</h3>
 <p>Используется эта https://github.com/64j/ModxCaptcha</p>
+
+<hr>
+Ветка обсуждения сниппета на форуме <a href="http://modx.im/blog/addons/4750.html" target="_blank">modx.im</a>
