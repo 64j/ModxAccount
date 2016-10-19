@@ -17,12 +17,22 @@ if(empty($controller)) {
 	$controller = $modx->documentIdentifier;
 }
 
-$config['controller'] = !empty($controller) ? (is_numeric($controller) ? $modx->makeUrl($controller) : '/' . ltrim($controller, '/')) : '/account';
-$config['controllerRegister'] = !empty($controllerRegister) ? (is_numeric($controllerRegister) ? $modx->makeUrl($controllerRegister) : '/' . ltrim($controllerRegister, '/')) : '/account/register';
-$config['controllerLogin'] = !empty($controllerLogin) ? (is_numeric($controllerLogin) ? $modx->makeUrl($controllerLogin) : '/' . ltrim($controllerLogin, '/')) : '/account';
-$config['controllerForgot'] = !empty($controllerForgot) ? (is_numeric($controllerForgot) ? $modx->makeUrl($controllerForgot) : '/' . ltrim($controllerForgot, '/')) : '/account/forgot';
-$config['controllerProfile'] = !empty($controllerProfile) ? (is_numeric($controllerProfile) ? $modx->makeUrl($controllerProfile) : '/' . ltrim($controllerProfile, '/')) : '/account/profile';
-$config['success'] = !empty($success) ? (is_numeric($success) ? $modx->makeUrl($success) : '/' . ltrim($success, '/')) : '';
+function trim_name_controller($controller) {
+	global $modx;
+	if(is_numeric($controller)) {
+		$controller = str_replace($modx->config['friendly_url_suffix'], '', $modx->makeUrl($controller));
+	} else {
+		$controller = '/' . ltrim($controller, '/');
+	}
+	return $controller;
+}
+
+$config['controller'] = !empty($controller) ? trim_name_controller($controller) : '/account';
+$config['controllerRegister'] = !empty($controllerRegister) ? trim_name_controller($controllerRegister) : '/account/register';
+$config['controllerLogin'] = !empty($controllerLogin) ? trim_name_controller($controllerLogin) : '/account';
+$config['controllerForgot'] = !empty($controllerForgot) ? trim_name_controller($controllerForgot) : '/account/forgot';
+$config['controllerProfile'] = !empty($controllerProfile) ? trim_name_controller($controllerProfile) : '/account/profile';
+$config['success'] = !empty($success) ? trim_name_controller($success) : '';
 $config['userGroupId'] = !empty($userGroupId) ? $userGroupId : '';
 $config['keyVeriWord'] = time();
 $config['tpl'] = isset($tpl) ? $tpl : '';
