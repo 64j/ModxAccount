@@ -63,6 +63,14 @@ class AccountControllerRegister extends Account {
 		if(empty($config['tpl'])) {
 			echo $this->view('assets/snippets/account/view/register.tpl', $data);
 		} else {
+			
+			foreach($data as $key => $value) {
+				if(is_array($value)) {
+					unset($data[$key]);
+					$data = array_merge($data, $this->array_keys_to_string(array($key => $value)));
+				}
+			}
+			
 			echo $this->modx->parseText($this->modx->getTpl($config['tpl']), $data);
 		}
 	}
@@ -75,20 +83,20 @@ class AccountControllerRegister extends Account {
 	private function validate($data) {
 
 		if(isset($data['fullname'])) {
-			if(mb_strlen($data['fullname']) < 3 || mb_strlen($data['fullname']) > 32) {
-				$this->error['fullname'] = 'Имя должно быть не менее 3 знаков.';
+			if(mb_strlen($data['fullname']) < 3 || mb_strlen($data['fullname']) > 30) {
+				$this->error['fullname'] = 'Имя должно быть не менее 3 и не более 30 знаков.';
 			}
 		} else if(isset($data['lastname']) || isset($data['firstname'])) {
 			if(isset($data['lastname'])) {
-				if(mb_strlen($data['lastname']) < 3 || mb_strlen($data['lastname']) > 32) {
-					$this->error['lastname'] = 'Фамилия должна быть не менее 3 знаков.';
+				if(mb_strlen($data['lastname']) < 3 || mb_strlen($data['lastname']) > 30) {
+					$this->error['lastname'] = 'Фамилия должна быть не менее 3 и не более 30 знаков.';
 				} else {
 					$data['fullname'] .= ($data['fullname'] ? ' ' . $data['lastname'] : $data['lastname']);
 				}
 			}
 			if(isset($data['firstname'])) {
-				if(mb_strlen($data['firstname']) < 3 || mb_strlen($data['firstname']) > 32) {
-					$this->error['firstname'] = 'Имя должно быть не менее 3 знаков.';
+				if(mb_strlen($data['firstname']) < 3 || mb_strlen($data['firstname']) > 30) {
+					$this->error['firstname'] = 'Имя должно быть не менее 3 и не более 30 знаков.';
 				} else {
 					$data['fullname'] .= ($data['fullname'] ? ' ' . $data['firstname'] : $data['firstname']);
 				}
@@ -96,8 +104,8 @@ class AccountControllerRegister extends Account {
 		}
 
 		if(isset($data['username'])) {
-			if(mb_strlen($data['username']) < 3 || mb_strlen($data['username']) > 32) {
-				$this->error['name'] = 'Логин должен быть не менее 3 знаков.';
+			if(mb_strlen($data['username']) < 3 || mb_strlen($data['username']) > 30) {
+				$this->error['name'] = 'Логин должен быть не менее 3 и не более 30 знаков.';
 			} else {
 				$username = $this->modx->db->getValue($this->modx->db->select('username', $this->modx->getFullTableName('web_users'), 'username="' . $data['username'] . '"'));
 				if($username) {
@@ -179,11 +187,11 @@ class AccountControllerRegister extends Account {
 			}
 		}
 
-		if(isset($data['captcha_' . $data['keyVeriWord']]) && $_SESSION['veriword_' . md5($data['keyVeriWord'])] !== $data['captcha_' . $data['keyVeriWord']]) {
+		if(isset($data['captcha_' . $data['keyVeriWord']]) && isset($_SESSION['veriword_' . md5($data['keyVeriWord'])]) && $_SESSION['veriword_' . md5($data['keyVeriWord'])] !== $data['captcha_' . $data['keyVeriWord']]) {
 			$this->error['captcha_' . $data['keyVeriWord']] = 'Неверный проверочный код.';
 		}
 
-		if(isset($data['captcha']) && $_SESSION['veriword'] !== $data['captcha']) {
+		if(isset($data['captcha']) && isset($_SESSION['veriword']) && $_SESSION['veriword'] !== $data['captcha']) {
 			$this->error['captcha'] = 'Неверный проверочный код.';
 		}
 
