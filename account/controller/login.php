@@ -28,7 +28,7 @@ class AccountControllerLogin extends Account {
 			$data[$this->clean($key)] = $this->clean($value);
 		}
 
-		if($data['action'] == 'login' && $this->validate($data)) {
+		if(isset($data['action']) && $data['action'] == 'login' && $this->validate($data)) {
 			$this->login($data);
 			$this->SessionHandler('start');
 			if($config['success']) {
