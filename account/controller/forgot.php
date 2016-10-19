@@ -41,8 +41,12 @@ class AccountControllerForgot extends Account {
 		foreach($this->error as $key => $value) {
 			$data['error_' . $key] = $value;
 		}
-
-		echo $this->view('assets/snippets/account/view/forgot.tpl', $data);
+		
+		if(empty($config['tpl'])) {
+			echo $this->view('assets/snippets/account/view/forgot.tpl', $data);
+		} else {
+			echo $this->modx->parseText($this->modx->getTpl($config['tpl']), $data);
+		}
 	}
 
 	/**
