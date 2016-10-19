@@ -47,7 +47,32 @@
 				<@ENDIF>
 			</div>
 		</div>
-
+        <div class="row form-group">
+            <div class="col-xs-3">
+                <label class="control-label" for="address">Улица</label>
+            </div>
+            <div class="col-xs-9">
+                <input class="form-control" type="text" id="address" name="custom_field[address][street]" value="[+custom_field.address.street+]">
+				<@IF:[+error_custom_field.address.street+]>
+                    <div class="text-danger">
+						[+error_custom_field.address.street+]
+                    </div>
+				<@ENDIF>
+            </div>
+        </div>
+        <div class="row form-group">
+            <div class="col-xs-3">
+                <label class="control-label" for="house">Дом</label>
+            </div>
+            <div class="col-xs-9">
+                <input class="form-control" type="text" id="house" name="custom_field[address][house]" value="[+custom_field.address.house+]">
+				<@IF:[+error_custom_field.address.house+]>
+                    <div class="text-danger">
+						[+error_custom_field.address.house+]
+                    </div>
+				<@ENDIF>
+            </div>
+        </div>
 		<hr>
 		<div class="row form-group">
 			<div class="col-xs-3">
