@@ -141,6 +141,53 @@ abstract class Account {
 	}
 	
 	/**
+	 * custom filed validate ajax
+	 * @param $data
+	 * @param array $parents
+	 */
+	protected function custom_field_validate_ajax($data, $parents = array()) {
+		foreach($data as $key => $value) {
+			$group = $parents;
+			array_push($group, $key);
+			if(is_array($value)) {
+				$this->custom_field_validate_ajax($value, $group);
+				continue;
+			}
+			if(!empty($parents)) {
+				if(empty($value)) {
+					$this->error['custom_field[' . implode('][', $group) . ']'] = 'Не заполнено.';
+				}
+				continue;
+			}
+		}
+	}
+
+	/**
+	 * custom filed validate
+	 * @param $data
+	 * @return array|string
+	 */
+	protected function custom_field_validate($data) {
+		if(is_array($data)) {
+			foreach($data as $key => $value) {
+				$data[$key] = $this->custom_field_validate($value);
+				if(empty($data[$key])) {
+					unset($data[$key]);
+				} else {
+					$this->error['custom_field'] = $data;
+				}
+			}
+		} else {
+			if(empty($data)) {
+				$data = 'Не заполнено.';
+			} else {
+				$data = '';
+			}
+		}
+		return $data;
+	}
+	
+	/**
 	 * view template
 	 * @param $template
 	 * @param array $data
