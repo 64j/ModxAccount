@@ -405,53 +405,11 @@ abstract class Account {
 	}
 
 	/**
-	 * Password generate
-	 *
-	 * @category   generate
-	 * @version   0.1
-	 * @license    GNU General Public License (GPL), http://www.gnu.org/copyleft/gpl.html
-	 * @param string $len длина пароля
-	 * @param string $data правила генерации пароля
-	 * @return string Строка с паролем
-	 * @author Agel_Nash <Agel_Nash@xaker.ru>
-	 *
-	 * Расшифровка значений $data
-	 * "A": A-Z буквы
-	 * "a": a-z буквы
-	 * "0": цифры
-	 * ".": все печатные символы
-	 *
-	 * @example
-	 * $this->genPass(10,"Aa"); //nwlTVzFdIt
-	 * $this->genPass(8,"0"); //71813728
-	 * $this->genPass(11,"A"); //VOLRTMEFAEV
-	 * $this->genPass(5,"a0"); //4hqi7
-	 * $this->genPass(5,"."); //2_Vt}
-	 * $this->genPass(20,"."); //AMV,>&?J)v55,(^g}Z06
-	 * $this->genPass(20,"aaa0aaa.A"); //rtvKja5xb0\KpdiRR1if
+	 * generate password
+	 * @return string
 	 */
-	protected function genPass($len = 8, $data = 'Aa0.') {
-		$opt = strlen($data);
-		$pass = array();
-
-		for($i = $len; $i > 0; $i--) {
-			switch($data[rand(0, ($opt - 1))]) {
-				case 'A':
-					$tmp = rand(65, 90);
-					break;
-				case 'a':
-					$tmp = rand(97, 122);
-					break;
-				case '0':
-					$tmp = rand(48, 57);
-					break;
-				default:
-					$tmp = rand(33, 126);
-			}
-			$pass[] = chr($tmp);
-		}
-		$pass = implode("", $pass);
-		return $pass;
+	protected function genPassword($length = 10) {
+		return substr(str_shuffle("qazxswedcvfrtgbnhyujmkiolp1234567890QAZXSWEDCVFRTGBNHYUJMKIOLP"), 0, $length);
 	}
 
 	/**
