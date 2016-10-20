@@ -84,7 +84,7 @@ class AccountControllerForgot extends Account {
 	 * @param $data
 	 */
 	private function forgot($data) {
-		$data['cachepwd'] = $this->genPass(10, 'Aa0');
+		$data['cachepwd'] = $this->genPassword();
 
 		$this->modx->db->update(array(
 			'cachepwd' => md5($data['cachepwd'])
