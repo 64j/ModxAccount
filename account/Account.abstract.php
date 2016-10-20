@@ -249,6 +249,7 @@ abstract class Account {
 			$ypos = 0 - ($new_height - $thumb_height) / 2;
 
 			$thumb = imagecreatetruecolor($thumb_width, $thumb_height);
+			imagefilledrectangle($thumb, 0, 0, $thumb_width, $thumb_height, imagecolorallocate($thumb, 255, 255, 255));
 			imagecopyresampled($thumb, $image, $xpos, $ypos, 0, 0, $new_width, $new_height, $width, $height);
 
 			if(!file_exists($this->modx->config['rb_base_url'] . 'images/users')) {
