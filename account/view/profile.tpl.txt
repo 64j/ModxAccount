@@ -31,7 +31,7 @@
 				<label class="control-label" for="phone">Телефон <sup class="text-danger">*</sup></label>
 			</div>
 			<div class="col-xs-9">
-				<input class="form-control" type="text" id="phone" name="phone" value="[+phone+]" placeholder="+7 (___) ___-__-__">
+				<input class="form-control" type="text" id="phone" name="phone" value="[+phone+]" placeholder="+7 (xxx) xxx-xx-xx">
 				<@IF:[+error_phone+]>
 					<div class="text-danger">
 						[+error_phone+]
