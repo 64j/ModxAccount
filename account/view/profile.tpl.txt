@@ -102,7 +102,7 @@
 				<label class="control-label" for="photo">Фото</label>
 			</div>
 			<div class="col-xs-9">
-				<input type="file" id="photo" name="photo" class="hidden">
+				<input type="file" id="photo" name="photo" class="hidden hidden-xs-up">
 				<p class="help-block">Выберите изображение. Размер файла не должен превышать 100 КБ</p>
 				<@IF:[+error_photo+]>
 					<div class="text-danger">
