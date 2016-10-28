@@ -78,7 +78,7 @@ abstract class Account {
 		if(is_array($data)) {
 			foreach($data as $key => $value) {
 				unset($data[$key]);
-				$data[$this->clean($key)] = $this->clean($value);
+				$data[$key] = $this->clean($value);
 			}
 		} else {
 			$data = trim($this->modx->stripTags($this->modx->db->escape($data)));
@@ -112,12 +112,13 @@ abstract class Account {
 	protected function date_validate($date) {
 		return date('d-m-Y', strtotime($date)) == $date;
 	}
-	
+
 	/**
 	 * custom array keys to string
 	 * @param $data
 	 * @param array $parents
 	 * @param array $delimiter
+	 * @return array
 	 */
 	protected function array_keys_to_string($data, $parents = array(), $delimiter = array('', '.', '')) {
 		$result = array();
@@ -186,6 +187,37 @@ abstract class Account {
 		}
 		return $data;
 	}
+
+	/**
+	 * login
+	 */
+	protected function login() {
+		if($this->getID()) {
+			$this->modx->db->update(array(
+				'password' => empty($this->user['cachepwd']) ? $this->user['password'] : $this->user['cachepwd'],
+				'cachepwd' => ''
+			), $this->modx->getFullTableName('web_users'), 'id=' . $this->getID());
+
+			$this->modx->db->update(array(
+				'logincount' => ($this->user['logincount'] + 1),
+				'lastlogin' => time(),
+				'thislogin' => 1
+			), $this->modx->getFullTableName('web_user_attributes'), 'id=' . $this->getID());
+		}
+	}
+
+	/**
+	 * login out
+	 */
+	public function logout() {
+		if($this->getID()) {
+			$this->modx->db->update(array(
+				'lastlogin' => time(),
+				'thislogin' => 0
+			), $this->modx->getFullTableName('web_user_attributes'), 'id=' . $this->getID());
+		}
+		$this->SessionHandler('destroy');
+	}
 	
 	/**
 	 * view template
@@ -212,7 +244,8 @@ abstract class Account {
 	/**
 	 * create image
 	 * @param $file
-	 * @param $filename
+	 * @param string $filename
+	 * @param string $path
 	 * @return string
 	 */
 	protected function image($file, $filename = '', $path = '') {
@@ -254,6 +287,9 @@ abstract class Account {
 
 			if(!file_exists($this->modx->config['rb_base_url'] . 'images/users')) {
 				mkdir($this->modx->config['base_path'] . $this->modx->config['rb_base_url'] . 'images/users', 0755, true);
+				if(!is_file(MODX_BASE_PATH . $this->modx->config['rb_base_url'] . 'images/users/.htaccess')) {
+					file_put_contents(MODX_BASE_PATH . $this->modx->config['rb_base_url'] . 'images/users/.htaccess', "Header append Cache-Control \"no-store, no-cache, must-revalidate, max-age=0\"\nExpiresActive On\nExpiresDefault \"now\"");
+				}
 			}
 
 			if(empty($filename)) {
@@ -286,11 +322,103 @@ abstract class Account {
 	}
 
 	/**
+	 * add photo
+	 * @param array $config
+	 * @return string
+	 */
+	public function add_photo($config = array()) {
+		$json = array();
+
+		if($this->getID()) {
+			if(!empty($_FILES['photo']['tmp_name'])) {
+				$info = getimagesize($_FILES['photo']['tmp_name']);
+				$types = array(
+					'image/gif',
+					'image/png',
+					'image/jpeg',
+					'image/jpg'
+				);
+				$size = 102400;
+
+				if(!in_array($info['mime'], $types)) {
+					$json['error'] = 'Выберите файл изображения. Неверный формат файла.';
+				} else if($_FILES['photo']['size'] >= $size) {
+					$json['error'] = 'Файл изображения превышает допустимые размеры.';
+				} else {
+					$path = $this->image($_FILES['photo']["tmp_name"], $this->user['email']);
+					@unlink(MODX_BASE_PATH . $this->user['photo']);
+					$this->modx->db->update(array(
+						'photo' => $path
+					), $this->modx->getFullTableName('web_user_attributes'), 'id=' . $this->getID());
+					$json['name'] = basename($path);
+					$json['path'] = $path;
+				}
+			}
+		} else {
+			if(!empty($_FILES['photo']['tmp_name'])) {
+				$info = getimagesize($_FILES['photo']['tmp_name']);
+				$types = array(
+					'image/gif',
+					'image/png',
+					'image/jpeg',
+					'image/jpg'
+				);
+				$size = 102400;
+
+				if(!in_array($info['mime'], $types)) {
+					$json['error'] = 'Выберите файл изображения. Неверный формат файла.';
+				} else if($_FILES['photo']['size'] >= $size) {
+					$json['error'] = 'Файл изображения превышает допустимые размеры.';
+				} else {
+					$path = $this->image($_FILES['photo']["tmp_name"], '', $this->modx->config['rb_base_url'] . 'cache/images/');
+					$json['name'] = basename($path);
+					$json['path'] = $path;
+				}
+			}
+			if($config['controller'] != $config['controllerRegister']) {
+				$json['redirect'] = $config['controllerRegister'];
+			}
+		}
+
+		header('content-type: application/json');
+		return json_encode($json);
+	}
+
+	/**
+	 * delete photo
+	 * @param $config
+	 * @return string
+	 */
+	public function del_photo($config) {
+		$json = array();
+
+		if($this->getID()) {
+			if(!empty($this->user['photo'])) {
+				@unlink(MODX_BASE_PATH . $this->user['photo']);
+				$this->modx->db->update(array(
+					'photo' => ''
+				), $this->modx->getFullTableName('web_user_attributes'), 'id=' . $this->getID());
+			}
+		} else {
+			if(!empty($config['photo'])) {
+				@unlink(MODX_BASE_PATH . $config['photo']);
+			}
+			if($config['controller'] != $config['controllerRegister']) {
+				$json['redirect'] = $config['controllerRegister'];
+			}
+		}
+
+		header('content-type: application/json');
+		return json_encode($json);
+	}
+
+	/**
 	 * SessionHandler
 	 * Starts the user session on login success. Destroys session on error or logout.
 	 *
 	 * @param string $directive ('start' or 'destroy')
-	 * @return void
+	 * @param string $cookieName
+	 * @param bool $remember
 	 * @author Raymond Irving
 	 * @author Scotty Delicious
 	 *
@@ -346,7 +474,6 @@ abstract class Account {
 				}
 				break;
 		}
-		return $this;
 	}
 
 	/**
@@ -406,6 +533,7 @@ abstract class Account {
 
 	/**
 	 * generate password
+	 * @param int $length
 	 * @return string
 	 */
 	protected function genPassword($length = 10) {
