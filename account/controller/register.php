@@ -25,25 +25,30 @@ class AccountControllerRegister extends Account {
 		}
 
 		foreach($_POST as $key => $value) {
-			$data[$this->clean($key)] = $this->clean($value);
+			$data[$key] = $this->clean($value);
 		}
 
 		if(!empty($data['photo_cache'])) {
 			$data['photo_cache_path'] = $this->modx->config['rb_base_url'] . 'cache/images/' . $data['photo_cache'];
 		}
 
-		if(isset($data['action']) && $data['action'] == 'register' && $this->validate($data)) {
-			$userid = $this->add($data);
-			if($userid && !$this->error) {
-				$this->send($data, $this->modx->config['websignupemail_message']);
-				$this->SessionHandler('start');
+		if(isset($data['action'])) {
+			switch($data['action']) {
+				case 'register': {
+					if($this->validate($data)) {
+						if($this->add($data) && !$this->error) {
+							$this->send($data, $this->modx->config['websignupemail_message']);
+							$this->SessionHandler('start');
+							if(!empty($config['success'])) {
+								$this->modx->sendRedirect($config['success']);
+							} else {
+								$this->modx->sendRedirect($config['controllerProfile']);
+							}
+						}
+					}
+					break;
+				}
 			}
-			if($config['success']) {
-				$this->modx->sendRedirect($config['success']);
-			} else {
-				$this->modx->sendRedirect($config['controllerProfile']);
-			}
-
 		}
 
 		foreach($this->error as $key => $value) {
@@ -208,6 +213,7 @@ class AccountControllerRegister extends Account {
 
 	/**
 	 * add User
+	 * @param $data
 	 * @return mixed|void
 	 */
 	private function add($data) {
@@ -215,11 +221,11 @@ class AccountControllerRegister extends Account {
 		// data format
 		if(!empty($_FILES['photo']['tmp_name'])) {
 			$data['photo'] = $this->image($_FILES['photo']['tmp_name'], $data['email']);
-			if(!empty($data['photo_cache_path'])) {
-				@unlink(MODX_BASE_PATH . $data['photo_cache_path']);
+			if(!empty($data['photo_cache'])) {
+				@unlink(MODX_BASE_PATH . $this->modx->config['rb_base_url'] . 'cache/images/' . $data['photo_cache']);
 			}
 		} else if(!empty($data['photo_cache'])) {
-			$data['photo'] = $this->image(MODX_BASE_PATH . $data['photo_cache_path'], $data['email']);
+			$data['photo'] = $this->image(MODX_BASE_PATH . $this->modx->config['rb_base_url'] . 'cache/images/' . $data['photo_cache'], $data['email']);
 		}
 
 		if(!empty($data['dob'])) {
@@ -276,7 +282,7 @@ class AccountControllerRegister extends Account {
 			}
 		}
 
-		if(count($data['custom_field']) > 0) {
+		if(!empty($data['custom_field'])) {
 			foreach($data['custom_field'] as $key => $value) {
 				$web_custom_field = $this->modx->db->insert(array(
 					'webuser' => $this->user['internalKey'],
@@ -308,85 +314,32 @@ class AccountControllerRegister extends Account {
 			$data['ajax'] = true;
 
 			foreach($_POST as $key => $value) {
-				$data[$this->clean($key)] = $this->clean($value);
+				$data[$key] = $this->clean($value);
 			}
 
-			if($data['action'] == 'register' && $this->validate($data)) {
-				$userid = $this->add($data);
-				if($userid && !$this->error) {
-					$this->send($data, $this->modx->config['websignupemail_message']);
-					$this->SessionHandler('start');
-					if($config['success']) {
-						$json['redirect'] = $config['success'];
-					} else {
-						$json['redirect'] = $config['controllerProfile'];
+			if(isset($data['action'])) {
+				switch($data['action']) {
+					case 'register': {
+						if($this->validate($data)) {
+							if($this->add($data) && !$this->error) {
+								$this->send($data, $this->modx->config['websignupemail_message']);
+								$this->SessionHandler('start');
+								if(!empty($config['success'])) {
+									$json['redirect'] = $config['success'];
+								} else {
+									$json['redirect'] = $config['controllerProfile'];
+								}
+							} else {
+								$json['error'] = $this->error;
+							}
+						} else {
+							$json['error'] = $this->error;
+						}
+						break;
 					}
-				} else {
-					$json['error'] = $this->error;
-				}
-			} else {
-				$json['error'] = $this->error;
-			}
-		}
-
-		header('content-type: application/json');
-		return json_encode($json);
-	}
-
-	/**
-	 * add photo
-	 * @param array $config
-	 * @return string
-	 */
-	public function add_photo($config = array()) {
-		$json = array();
-
-		if($this->getID()) {
-			$json['redirect'] = $config['controllerProfile'];
-
-		} else {
-			if(!empty($_FILES['photo']['tmp_name'])) {
-				$info = getimagesize($_FILES['photo']['tmp_name']);
-				$types = array(
-					'image/gif',
-					'image/png',
-					'image/jpeg',
-					'image/jpg'
-				);
-				$size = 102400;
-
-				if(!in_array($info['mime'], $types)) {
-					$json['error'] = 'Выберите файл изображения. Неверный формат файла.';
-				} else if($_FILES['photo']['size'] >= $size) {
-					$json['error'] = 'Файл изображения превышает допустимые размеры.';
-				} else {
-					$path = $this->image($_FILES['photo']["tmp_name"], '', $this->modx->config['rb_base_url'] . 'cache/images/');
-					$json['name'] = basename($path);
-					$json['path'] = $path;
 				}
 			}
-		}
 
-		header('content-type: application/json');
-		return json_encode($json);
-	}
-
-
-	/**
-	 * delete photo
-	 * @param $config
-	 * @return string
-	 */
-	public function del_photo($config) {
-		$json = array();
-
-		if($this->getID()) {
-			$json['redirect'] = $config['controllerRegister'];
-
-		} else {
-			if(!empty($config['photo'])) {
-				@unlink(MODX_BASE_PATH . $config['photo']);
-			}
 		}
 
 		header('content-type: application/json');
