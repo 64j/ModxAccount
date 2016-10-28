@@ -25,16 +25,22 @@ class AccountControllerForgot extends Account {
 		}
 
 		foreach($_POST as $key => $value) {
-			$data[$this->clean($key)] = $this->clean($value);
+			$data[$key] = $this->clean($value);
 		}
 
-		if(isset($data['action']) && $data['action'] == 'forgot' && $this->validate($data)) {
-			$this->forgot($data);
-
-			if($config['success']) {
-				$this->modx->sendRedirect($config['success']);
-			} else {
-				$this->modx->sendRedirect($config['controllerLogin']);
+		if(isset($data['action'])) {
+			switch($data['action']) {
+				case 'forgot': {
+					if($this->validate($data)) {
+						$this->forgot($data);
+						if(!empty($config['success'])) {
+							$this->modx->sendRedirect($config['success']);
+						} else {
+							$this->modx->sendRedirect($config['controllerLogin']);
+						}
+					}
+					break;
+				}
 			}
 		}
 
@@ -108,21 +114,27 @@ class AccountControllerForgot extends Account {
 
 		} else {
 			foreach($_POST as $key => $value) {
-				$data[$this->clean($key)] = $this->clean($value);
+				$data[$key] = $this->clean($value);
 			}
 
-			if($data['action'] == 'forgot' && $this->validate($data)) {
-				$this->forgot($data);
-
-				if($config['success']) {
-					$json['redirect'] = $config['success'];
-				} else {
-					$json['redirect'] = $config['controllerLogin'];
+			if(isset($data['action'])) {
+				switch($data['action']) {
+					case 'forgot': {
+						if($this->validate($data)) {
+							$this->forgot($data);
+							if(!empty($config['success'])) {
+								$json['redirect'] = $config['success'];
+							} else {
+								$json['redirect'] = $config['controllerLogin'];
+							}
+						} else {
+							$json['error'] = $this->error;
+						}
+						break;
+					}
 				}
-
-			} else {
-				$json['error'] = $this->error;
 			}
+
 		}
 
 		header('content-type: application/json');
