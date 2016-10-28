@@ -25,16 +25,23 @@ class AccountControllerLogin extends Account {
 		$data['json_config'] = json_encode($config);
 
 		foreach($_POST as $key => $value) {
-			$data[$this->clean($key)] = $this->clean($value);
+			$data[$key] = $this->clean($value);
 		}
 
-		if(isset($data['action']) && $data['action'] == 'login' && $this->validate($data)) {
-			$this->login($data);
-			$this->SessionHandler('start');
-			if($config['success']) {
-				$this->modx->sendRedirect($config['success']);
-			} else {
-				$this->modx->sendRedirect($config['controllerProfile']);
+		if(isset($data['action'])) {
+			switch($data['action']) {
+				case 'login': {
+					if($this->validate($data)) {
+						$this->login();
+						$this->SessionHandler('start');
+						if(!empty($config['success'])) {
+							$this->modx->sendRedirect($config['success']);
+						} else {
+							$this->modx->sendRedirect($config['controllerProfile']);
+						}
+					}
+					break;
+				}
 			}
 		}
 
@@ -123,22 +130,6 @@ class AccountControllerLogin extends Account {
 	}
 
 	/**
-	 * login
-	 */
-	private function login() {
-		$this->modx->db->update(array(
-			'password' => empty($this->user['cachepwd']) ? $this->user['password'] : $this->user['cachepwd'],
-			'cachepwd' => ''
-		), $this->modx->getFullTableName('web_users'), 'id=' . $this->user['internalKey']);
-
-		$this->modx->db->update(array(
-			'logincount' => ($this->user['logincount'] + 1),
-			'lastlogin' => time(),
-			'thislogin' => 1
-		), $this->modx->getFullTableName('web_user_attributes'), 'id=' . $this->user['internalKey']);
-	}
-
-	/**
 	 * ajax
 	 * @param $config
 	 * @return array
@@ -151,20 +142,28 @@ class AccountControllerLogin extends Account {
 
 		} else {
 			foreach($_POST as $key => $value) {
-				$data[$this->clean($key)] = $this->clean($value);
+				$data[$key] = $this->clean($value);
 			}
 
-			if($data['action'] == 'login' && $this->validate($data)) {
-				$this->login($data);
-				$this->SessionHandler('start');
-				if($config['success']) {
-					$json['redirect'] = $config['success'];
-				} else {
-					$json['redirect'] = $config['controllerProfile'];
+			if(isset($data['action'])) {
+				switch($data['action']) {
+					case 'login': {
+						if($this->validate($data)) {
+							$this->login();
+							$this->SessionHandler('start');
+							if(!empty($config['success'])) {
+								$json['redirect'] = $config['success'];
+							} else {
+								$json['redirect'] = $config['controllerProfile'];
+							}
+						} else {
+							$json['error'] = $this->error;
+						}
+						break;
+					}
 				}
-			} else {
-				$json['error'] = $this->error;
 			}
+
 		}
 
 		header('content-type: application/json');
