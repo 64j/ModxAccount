@@ -39,27 +39,34 @@ class AccountControllerProfile extends Account {
 		}
 
 		foreach($_POST as $key => $value) {
-			$data[$this->clean($key)] = $this->clean($value);
+			$data[$key] = $this->clean($value);
 		}
 
-		if($_REQUEST['action'] == 'logout') {
+		if(isset($_REQUEST['action']) && $_REQUEST['action'] == 'logout') {
 			$data['action'] = 'logout';
 		}
 
 		$data['controllerLogout'] = $config['controller'] . '?action=logout';
 
-		if($data['action'] == 'save' && $this->validate($data)) {
-			$this->save($data);
-
-			if($config['success']) {
-				$this->modx->sendRedirect($config['success']);
-			} else {
-				$this->modx->sendRedirect($config['controllerProfile']);
+		if(isset($data['action'])) {
+			switch($data['action']) {
+				case 'save': {
+					if($this->validate($data)) {
+						$this->save($data);
+						if(!empty($config['success'])) {
+							$this->modx->sendRedirect($config['success']);
+						} else {
+							$this->modx->sendRedirect($config['controllerProfile']);
+						}
+					}
+					break;
+				}
+				case 'logout': {
+					$this->logout();
+					$this->modx->sendRedirect($config['controllerLogin']);
+					break;
+				}
 			}
-
-		} else if($data['action'] == 'logout') {
-			$this->logout();
-			$this->modx->sendRedirect($config['controllerLogin']);
 		}
 
 		foreach($this->error as $key => $value) {
@@ -256,7 +263,7 @@ class AccountControllerProfile extends Account {
 				$user[$key] = $data[$key];
 			}
 		}
-		if(count($user) > 0) {
+		if(!empty($user)) {
 			$this->modx->db->update($user, $this->modx->getFullTableName('web_users'), 'id=' . $this->getID());
 		}
 
@@ -267,12 +274,12 @@ class AccountControllerProfile extends Account {
 				$attribute[$key] = $data[$key];
 			}
 		}
-		if(count($attribute) > 0) {
+		if(!empty($attribute)) {
 			$this->modx->db->update($attribute, $this->modx->getFullTableName('web_user_attributes'), 'id=' . $this->getID());
 		}
 
 		// custom field
-		if(count($data['custom_field']) > 0) {
+		if(!empty($data['custom_field'])) {
 			foreach($data['custom_field'] as $key => $value) {
 				if($key == 'address') {
 					$this->modx->db->insert(array(
@@ -293,19 +300,6 @@ class AccountControllerProfile extends Account {
 	}
 
 	/**
-	 * login out
-	 */
-	public function logout() {
-		if($this->getID()) {
-			$this->modx->db->update(array(
-				'lastlogin' => time(),
-				'thislogin' => 0
-			), $this->modx->getFullTableName('web_user_attributes'), 'id=' . $this->getID());
-		}
-		$this->SessionHandler('destroy');
-	}
-
-	/**
 	 * ajax
 	 * @param $config
 	 * @return string
@@ -317,99 +311,38 @@ class AccountControllerProfile extends Account {
 			$data['ajax'] = true;
 
 			foreach($_POST as $key => $value) {
-				$data[$this->clean($key)] = $this->clean($value);
+				$data[$key] = $this->clean($value);
 			}
 
-			if($data['action'] == 'save' && $this->validate($data)) {
-				$userid = $this->save($data);
-
-				if($userid && !$this->error) {
-					$json['success']['password'] = '';
-					$json['success']['confirm'] = '';
-					if($config['success']) {
-						$json['redirect'] = $config['success'];
+			if(isset($data['action'])) {
+				switch($data['action']) {
+					case 'save': {
+						if($this->validate($data)) {
+							if($this->save($data) && !$this->error) {
+								$json['success']['password'] = '';
+								$json['success']['confirm'] = '';
+								if(!empty($config['success'])) {
+									$json['redirect'] = $config['success'];
+								}
+							} else {
+								$json['error'] = $this->error;
+							}
+						} else {
+							$json['error'] = $this->error;
+						}
+						break;
 					}
-
-				} else {
-					$json['error'] = $this->error;
-
-				}
-
-			} else if($data['action'] == 'logout') {
-				$this->logout();
-				$json['redirect'] = $config['controllerLogin'];
-
-			} else {
-				$json['error'] = $this->error;
-
-			}
-		} else {
-			$json['redirect'] = $config['controllerRegister'];
-
-		}
-
-		header('content-type: application/json');
-		return json_encode($json);
-	}
-
-	/**
-	 * add photo
-	 * @param array $config
-	 * @return string
-	 */
-	public function add_photo($config = array()) {
-		$json = array();
-
-		if($this->getID()) {
-			if(!empty($_FILES['photo']['tmp_name'])) {
-				$info = getimagesize($_FILES['photo']['tmp_name']);
-				$types = array(
-					'image/gif',
-					'image/png',
-					'image/jpeg',
-					'image/jpg'
-				);
-				$size = 102400;
-
-				if(!in_array($info['mime'], $types)) {
-					$json['error'] = 'Выберите файл изображения. Неверный формат файла.';
-				} else if($_FILES['photo']['size'] >= $size) {
-					$json['error'] = 'Файл изображения превышает допустимые размеры.';
-				} else {
-					$path = $this->image($_FILES['photo']["tmp_name"], $this->user['email']);
-					@unlink(MODX_BASE_PATH . $this->user['photo']);
-					$this->modx->db->update(array(
-						'photo' => $path
-					), $this->modx->getFullTableName('web_user_attributes'), 'id=' . $this->getID());
-					$json['name'] = basename($path);
-					$json['path'] = $path;
+					case 'logout': {
+						$this->logout();
+						$json['redirect'] = $config['controllerLogin'];
+						break;
+					}
 				}
 			}
+
 		} else {
 			$json['redirect'] = $config['controllerRegister'];
-		}
 
-		header('content-type: application/json');
-		return json_encode($json);
-	}
-
-	/**
-	 * delete photo
-	 * @param $config
-	 * @return string
-	 */
-	public function del_photo($config) {
-		$json = array();
-
-		if($this->getID()) {
-			if(!empty($this->user['photo'])) {
-				@unlink(MODX_BASE_PATH . $this->user['photo']);
-				$this->modx->db->update(array(
-					'photo' => ''
-				), $this->modx->getFullTableName('web_user_attributes'), 'id=' . $this->getID());
-			}
-		} else {
-			$json['redirect'] = $config['controllerRegister'];
 		}
 
 		header('content-type: application/json');
