@@ -106,7 +106,7 @@ require MODX_BASE_PATH.'assets/snippets/account/snippet.account.php';
 <?php
 $chars = !empty($modx->config['captcha_words']) ? preg_replace('![^\w\d]*!', '', $modx->config['captcha_words']) : '1234567890';
 $chars = substr(str_shuffle($chars), 0, 5);
-if($_REQUEST['key']) {
+if(isset($_REQUEST['key'])) {
 	$_SESSION['veriword_' . md5($_REQUEST['key'])] = $chars;
 } else {
 	$_SESSION['veriword'] = $chars;
