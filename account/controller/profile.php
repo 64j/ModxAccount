@@ -285,12 +285,12 @@ class AccountControllerProfile extends Account {
 					$this->modx->db->insert(array(
 						'webuser' => $this->getID(),
 						'setting_name' => $key,
-						'setting_value' => is_array($value) ? json_encode($value) : $value
+						'setting_value' => is_array($value) ? json_encode($value, JSON_UNESCAPED_UNICODE) : $value
 					), $this->modx->getFullTableName('web_user_settings'));
 				} else {
 					$this->modx->db->query("REPLACE INTO " . $this->modx->getFullTableName('web_user_settings') . " (setting_name, setting_value) 
 					VALUES ('" . $key . "', 
-					'" . (is_array($value) ? json_encode($value) : $value) . "')
+					'" . (is_array($value) ? json_encode($value, JSON_UNESCAPED_UNICODE) : $value) . "')
 					WHERE id=" . $this->getID());
 				}
 			}
