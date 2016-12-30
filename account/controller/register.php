@@ -287,7 +287,7 @@ class AccountControllerRegister extends Account {
 				$web_custom_field = $this->modx->db->insert(array(
 					'webuser' => $this->user['internalKey'],
 					'setting_name' => $key,
-					'setting_value' => is_array($value) ? json_encode($value) : $value
+					'setting_value' => is_array($value) ? json_encode($value, JSON_UNESCAPED_UNICODE) : $value
 				), $this->modx->getFullTableName('web_user_settings'));
 			}
 
