@@ -1,4 +1,4 @@
-<?
+<?php
 
 if(!defined('MODX_BASE_PATH')) {
 	die('Unauthorized access.');
