@@ -126,5 +126,6 @@ imagepng($img);
 imagedestroy($img);
 ?>
 ```
+
 <hr>
 Ветка обсуждения сниппета на форуме <a href="http://modx.im/blog/addons/4750.html" target="_blank">modx.im</a>
