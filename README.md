@@ -101,7 +101,8 @@ require MODX_BASE_PATH.'assets/snippets/account/snippet.account.php';
 
 <h3>Капча</h3>
 <p>Используется эта https://github.com/64j/ModxCaptcha</p>
-либо создать сниппет captcha и вывести его на отдельной странице с шаблоном blank и типом text/plain
+<p>либо создать сниппет captcha и вывести его на отдельной странице с шаблоном blank и типом text/plain</p>
+
 ```php
 <?php
 $chars = !empty($modx->config['captcha_words']) ? preg_replace('![^\w\d]*!', '', $modx->config['captcha_words']) : '1234567890';
@@ -126,6 +127,5 @@ imagepng($img);
 imagedestroy($img);
 ?>
 ```
-
 <hr>
 Ветка обсуждения сниппета на форуме <a href="http://modx.im/blog/addons/4750.html" target="_blank">modx.im</a>
